@@ -1,0 +1,10 @@
+version: "3"
+services:
+  bc101:
+    build: .
+    ports:
+      - "81:5000"
+  bc102:
+    build: .
+    ports:
+      - "82:5000"
