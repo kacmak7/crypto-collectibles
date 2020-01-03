@@ -1,10 +1,10 @@
 version: "3"
 services:
-  bc101:
+  node_1:
     build: .
     ports:
       - "81:5000"
-  bc102:
+  node_2:
     build: .
     ports:
       - "82:5000"

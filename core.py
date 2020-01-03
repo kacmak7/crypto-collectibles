@@ -28,8 +28,24 @@ class Blockchain:
         if parsed_url.netloc:
             self.nodes.add(parsed_url.netloc)
         elif parsed_url.path:
-            # Accepts an URL without scheme like '192.168.0.5:5000'.
+            # Accepts an URL without scheme like '192.168.0.5:5000'
             self.nodes.add(parsed_url.path)
+        else:
+            raise ValueError("Invalid URL")
+
+    def unregister_node(self, address):
+        """
+        Delete a node from the list of nodes
+
+        :param address: Address of node. Eg. 'http://192.168.0.5:5000'
+        """
+
+        parsed_url = urlparse(address)
+        if parsed_url.netloc:
+            self.nodes.remove(parsed_url.netloc)
+        elif parsed_url.path:
+            # Accepts an URL without scheme like '192.168.0.5:5000'
+            self.nodes.remove(parsed_url.path)
         else:
             raise ValueError("Invalid URL")
 
@@ -248,7 +264,7 @@ def full_chain():
     return jsonify(response), 200
 
 
-@app.route("/nodes/register", methods=["POST"])
+@app.route("/nodes", methods=["POST"])
 def register_nodes():
     values = request.get_json()
 
@@ -265,6 +281,22 @@ def register_nodes():
     }
     return jsonify(response), 201
 
+@app.route("/nodes", methods=["DELETE"])
+def unregister_nodes():
+    values = request.get_json()
+
+    nodes = values.get("nodes")
+    if nodes is None:
+        return "Error: Please supply a valid list of nodes", 400
+
+    for node in nodes:
+        blockchain.unregister_node(node)
+
+    response = {
+        "message": "Some nodes have been deleted (maybe)", # maybe
+        "total_nodes": list(blockchain.nodes), 
+    }
+    return jsonify(response), 201
 
 @app.route("/nodes/resolve", methods=["GET"])
 def consensus():
