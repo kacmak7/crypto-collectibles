@@ -8,3 +8,8 @@ services:
     build: .
     ports:
       - "82:5000"
+  node_3:
+    build: .
+    ports:
+      - "83:5000"
+
